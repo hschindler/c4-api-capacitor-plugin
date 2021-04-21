@@ -1,6 +1,6 @@
 {
   "name": "c4-api-capacitor-plugin",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Plugin for C4 Devices to use Barcode and UHF RFID",
   "main": "dist/plugin.cjs.js",
   "module": "dist/esm/index.js",
@@ -37,7 +37,7 @@
     "eslint": "eslint . --ext ts",
     "prettier": "prettier \"**/*.{css,html,ts,js,java}\"",
     "swiftlint": "node-swiftlint",
-    "docgen": "docgen --api C4ApiCapacitorPluginPlugin --output-readme README.md --output-json dist/docs.json",
+    "docgen": "docgen --api C4ApiCapacitorPlugin --output-readme README.md --output-json dist/docs.json",
     "build": "npm run clean && npm run docgen && tsc && rollup -c rollup.config.js",
     "clean": "rimraf ./dist",
     "watch": "tsc --watch",

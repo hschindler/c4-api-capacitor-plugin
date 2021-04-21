@@ -1,10 +1,41 @@
 import { WebPlugin } from '@capacitor/core';
 
-import type { C4ApiCapacitorPluginPlugin } from './definitions';
+import type { C4ApiCapacitorPlugin } from './definitions';
 
-export class C4ApiCapacitorPluginWeb extends WebPlugin implements C4ApiCapacitorPluginPlugin {
-  async echo(options: { value: string }): Promise<{ value: string }> {
-    console.log('ECHO', options);
-    return options;
-  }
+export class C4ApiCapacitorPluginWeb extends WebPlugin implements C4ApiCapacitorPlugin {
+    async echo(options: { value: string }): Promise<{ value: string }> {
+        console.log('ECHO', options);
+        return options;
+    }
+
+    async getFirmware(): Promise<number[]> {
+        // logic here
+        this.throwUnimplementedError();
+    }
+
+    async startInventory(): Promise<boolean> {
+        // logic here
+        this.throwUnimplementedError();
+    }
+
+    async stopInventory(): Promise<boolean> {
+        // logic here
+        this.throwUnimplementedError();
+    }
+
+    async setOutputPower(): Promise<boolean> {
+        // logic here
+        this.throwUnimplementedError();
+    }
+
+    async scanBarcode(): Promise<boolean> {
+        // logic here
+        this.throwUnimplementedError();
+    }
+
+    private throwUnimplementedError(): never {
+        throw this.unimplemented('Not implemented on web.');
+    }
+
+
 }
