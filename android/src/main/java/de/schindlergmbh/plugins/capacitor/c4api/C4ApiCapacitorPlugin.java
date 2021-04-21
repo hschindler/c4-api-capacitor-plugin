@@ -21,7 +21,7 @@ import java.util.List;
 
 import android.util.Log;
 
-@CapacitorPlugin(name = "C4ApiCapacitor")
+@CapacitorPlugin(name = "C4ApiCapacitorPlugin")
 public class C4ApiCapacitorPlugin extends Plugin {
 
     private static final String TAG = C4ApiCapacitorPlugin.class.getName();
