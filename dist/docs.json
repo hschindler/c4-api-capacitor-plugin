@@ -1,0 +1,104 @@
+{
+  "api": {
+    "name": "C4ApiCapacitorPlugin",
+    "slug": "c4apicapacitorplugin",
+    "docs": "",
+    "tags": [],
+    "methods": [
+      {
+        "name": "echo",
+        "signature": "(options: { value: string; }) => any",
+        "parameters": [
+          {
+            "name": "options",
+            "docs": "",
+            "type": "{ value: string; }"
+          }
+        ],
+        "returns": "any",
+        "tags": [],
+        "docs": "",
+        "complexTypes": [],
+        "slug": "echo"
+      },
+      {
+        "name": "getFirmware",
+        "signature": "() => any",
+        "parameters": [],
+        "returns": "any",
+        "tags": [
+          {
+            "name": "since",
+            "text": "1.0.0"
+          }
+        ],
+        "docs": "Gets RFID UHF reader firmware.",
+        "complexTypes": [],
+        "slug": "getfirmware"
+      },
+      {
+        "name": "startInventory",
+        "signature": "() => any",
+        "parameters": [],
+        "returns": "any",
+        "tags": [
+          {
+            "name": "since",
+            "text": "1.0.0"
+          }
+        ],
+        "docs": "Starts RFID UHF inventory.",
+        "complexTypes": [],
+        "slug": "startinventory"
+      },
+      {
+        "name": "stopInventory",
+        "signature": "() => any",
+        "parameters": [],
+        "returns": "any",
+        "tags": [
+          {
+            "name": "since",
+            "text": "1.0.0"
+          }
+        ],
+        "docs": "Stops RFID UHF inventory.",
+        "complexTypes": [],
+        "slug": "stopinventory"
+      },
+      {
+        "name": "setOutputPower",
+        "signature": "() => any",
+        "parameters": [],
+        "returns": "any",
+        "tags": [
+          {
+            "name": "since",
+            "text": "1.0.0"
+          }
+        ],
+        "docs": "Sets RFID UHF output power.",
+        "complexTypes": [],
+        "slug": "setoutputpower"
+      },
+      {
+        "name": "scanBarcode",
+        "signature": "() => any",
+        "parameters": [],
+        "returns": "any",
+        "tags": [
+          {
+            "name": "since",
+            "text": "1.0.0"
+          }
+        ],
+        "docs": "Starts scanning barcode with 1D Scanner.",
+        "complexTypes": [],
+        "slug": "scanbarcode"
+      }
+    ],
+    "properties": []
+  },
+  "interfaces": [],
+  "enums": []
+}
