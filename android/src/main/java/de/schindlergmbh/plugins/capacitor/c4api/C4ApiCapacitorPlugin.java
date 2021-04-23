@@ -52,18 +52,19 @@ public class C4ApiCapacitorPlugin extends Plugin {
 
     private Thread _scanThread;
 
-    @Override
-    public void onDestroy() {
-       super.onDestroy();
+    // TODO: how can i use onDestroy with capacitor?
+    // @Override
+    // public void onDestroy() {
+    //    super.onDestroy();
 
-       Log.d(TAG, "onDestroy C4 plugin");
+    //    Log.d(TAG, "onDestroy C4 plugin");
 
-       this.StopInventoryThread();
+    //    this.StopInventoryThread();
 
-       this.disposeUHFManager();
+    //    this.disposeUHFManager();
 
-       this.closeBarcodeManager();
-    }
+    //    this.closeBarcodeManager();
+    // }
 
 
     public void echo(PluginCall call) {
