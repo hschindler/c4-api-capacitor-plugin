@@ -2,17 +2,11 @@
 node_modules
 
 # iOS files
-Pods
-Podfile.lock
-Build
-xcuserdata
+
 
 # macOS files
 .DS_Store
 
-
-
-# Based on Android gitignore template: https://github.com/github/gitignore/blob/HEAD/Android.gitignore
 
 # Built application files
 *.apk
@@ -25,13 +19,9 @@ xcuserdata
 *.class
 
 # Generated files
-bin
-gen
-out
 
 # Gradle files
-.gradle
-build
+
 
 # Local configuration file (sdk path, etc)
 local.properties
