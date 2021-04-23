@@ -1,0 +1,10 @@
+de/schindlergmbh/plugins/capacitor/c4api/BuildConfig.java
+ de.schindlergmbh.plugins.capacitor.c4api.BuildConfig
+de/schindlergmbh/plugins/capacitor/c4api/EPC.java
+ de.schindlergmbh.plugins.capacitor.c4api.EPC
+de/schindlergmbh/plugins/capacitor/c4api/C4ApiCapacitorPlugin.java
+ de.schindlergmbh.plugins.capacitor.c4api.C4ApiCapacitorPlugin
+ de.schindlergmbh.plugins.capacitor.c4api.C4ApiCapacitorPlugin$1
+ de.schindlergmbh.plugins.capacitor.c4api.C4ApiCapacitorPlugin$BarcodeHandler
+ de.schindlergmbh.plugins.capacitor.c4api.C4ApiCapacitorPlugin$InventoryThread
+ de.schindlergmbh.plugins.capacitor.c4api.C4ApiCapacitorPlugin$closeBarcodeCallback
