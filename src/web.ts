@@ -8,12 +8,12 @@ export class C4ApiCapacitorPluginWeb extends WebPlugin implements C4ApiCapacitor
         return options;
     }
 
-    async getFirmware(): Promise<number[]> {
+    async getFirmware(): Promise<{ firmware: number[] }> {
         // logic here
         this.throwUnimplementedError();
     }
 
-    async startInventory(): Promise<boolean> {
+    async startInventory(): Promise<{ uhfData: string[] }> {
         // logic here
         this.throwUnimplementedError();
     }
@@ -28,7 +28,7 @@ export class C4ApiCapacitorPluginWeb extends WebPlugin implements C4ApiCapacitor
         this.throwUnimplementedError();
     }
 
-    async scanBarcode(): Promise<boolean> {
+    async scanBarcode(): Promise<{ barcodeData: string }> {
         // logic here
         this.throwUnimplementedError();
     }

@@ -6,14 +6,14 @@ export interface C4ApiCapacitorPlugin {
   *
   * @since 1.0.0
   */
-  getFirmware(): Promise<number[]>;
+  getFirmware(): Promise<{ firmware: number[] }>;
 
   /**
   * Starts RFID UHF inventory.
   *
   * @since 1.0.0
   */
-  startInventory(): Promise<boolean>;
+  startInventory(): Promise<{ uhfData: string[] }>;
 
   /**
   * Stops RFID UHF inventory.
@@ -34,5 +34,5 @@ export interface C4ApiCapacitorPlugin {
   *
   * @since 1.0.0
   */
-  scanBarcode(): Promise<boolean>;
+  scanBarcode(): Promise<{ barcodeData: string }>;
 }

@@ -12,12 +12,14 @@ import org.json.JSONException;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.os.Handler;
 
-// import com.handheld.Barcode1D.Barcode1DManager;
-// import com.handheld.UHF.UhfManager;
 
-// import cn.pda.serialport.SerialPort;
-// import cn.pda.serialport.Tools;
+import com.handheld.Barcode1D.Barcode1DManager;
+import com.handheld.UHF.UhfManager;
+
+import cn.pda.serialport.SerialPort;
+import cn.pda.serialport.Tools;
 
 import android.util.Log;
 
@@ -26,9 +28,8 @@ public class C4ApiCapacitorPlugin extends Plugin {
 
     private static final String TAG = C4ApiCapacitorPlugin.class.getName();
 
-
-    // private UhfManager _uhfManager;
-    // private Barcode1DManager _barcodeManager;
+    private UhfManager _uhfManager;
+    private Barcode1DManager _barcodeManager;
 
     private boolean _barcodeInitFlag = false;
     private boolean _initRuns = false;
@@ -44,7 +45,7 @@ public class C4ApiCapacitorPlugin extends Plugin {
     private int _uhfPort = 13;
 
     private int _barcodePort = 0;
-    // private int _barcodePower = SerialPort.Power_Scaner;
+    private int _barcodePower = SerialPort.Power_Scaner;
     private int _barcodeBaudrate = 9600;
 
     private int _outputPower = 0;
@@ -53,8 +54,12 @@ public class C4ApiCapacitorPlugin extends Plugin {
 
 
 
-    public String echo(String value) {
-        return value;
+    public void echo(PluginCall call) {
+        String value = call.getString("value");
+
+        JSObject ret = new JSObject();
+        ret.put("value", value);
+        call.resolve(ret);
     }
 
     @PluginMethod()
@@ -62,21 +67,29 @@ public class C4ApiCapacitorPlugin extends Plugin {
        
         Log.d(TAG, "getFirmware");
 
-        final byte[] firmwareVersion = {1,2,3,4};
+        this.initializeUHFManager();
 
-        // this.initializeUHFManager();
-
-        // if (_uhfManager == null) {
-        //     call.reject("UHF API not installed");
-        //     return;
-        // }
+        if (_uhfManager == null) {
+            call.reject("UHF API not installed");
+            return;
+        }
 
         // final byte[] firmwareVersion = _uhfManager.getFirmware();
+        byte[] firmwareVersion = _uhfManager.getFirmware();
 
-        // this.disposeUHFManager();
+        if (firmwareVersion != null) {
+            Log.d(TAG, "firmwareVersion");
+            Log.d(TAG, String.valueOf(firmwareVersion.length));
+            Log.d(TAG, String.valueOf(firmwareVersion[0]));
+            Log.d(TAG, String.valueOf(firmwareVersion[1]));
+        } else {
+            firmwareVersion = "test".getBytes();                                                                                                                                                                                                          
+        }
+        
+        this.disposeUHFManager();
 
         JSObject ret = new JSObject();
-        ret.put("value", firmwareVersion);
+        ret.put("firmware", firmwareVersion);
         call.resolve(ret);
     }
 
@@ -89,21 +102,18 @@ public class C4ApiCapacitorPlugin extends Plugin {
         
         _listEPCObject = new ArrayList<EPC>();
 
-        this.StartInventoryThread();
-
-        
-
         saveCall(call);
 
-        JSObject ret = new JSObject();
-        ret.put("value", result);
-        call.resolve(ret);
+        this.StartInventoryThread();
+
     }
 
     @PluginMethod()
     public void stopInventory(PluginCall call) {
        
         Boolean result = true;
+
+        this.StopInventoryThread();
 
         JSObject ret = new JSObject();
         ret.put("value", result);
@@ -126,84 +136,195 @@ public class C4ApiCapacitorPlugin extends Plugin {
     public void scanBarcode(PluginCall call) {
        
         Boolean result = true;
-
         JSObject ret = new JSObject();
-        ret.put("value", result);
-        call.resolve(ret);
+
+        try {
+            // this._barcodeCallBackContext = callbackContext;
+
+            Barcode1DManager.BaudRate = _barcodeBaudrate;
+            Barcode1DManager.Port = _barcodePort;
+            Barcode1DManager.Power = _barcodePower;
+    
+            try {
+                if (_barcodeManager == null) {
+                    _barcodeManager = new Barcode1DManager();
+                }
+            } catch (Exception e) {
+                _errorLog = e.getMessage();
+                e.printStackTrace();
+            }
+
+            BarcodeHandler barcodeHandler = new BarcodeHandler(call, new closeBarcodeCallback() {
+                @Override
+                public void closeBarcodeManager() {
+                    if (_barcodeManager != null) {
+                        Log.d(TAG, "closeBarcodeManager");
+
+                        try {
+                            _barcodeManager.Close();
+                        } catch (Exception e) {
+                            _errorLog = e.getMessage();
+                        }
+
+                    }
+                }
+            });
+
+            _barcodeManager.Open(barcodeHandler);
+
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            _barcodeManager.Scan();
+
+        } catch (Exception e) {
+            _errorLog = e.getMessage();
+
+            // PluginResult pluginResult = new PluginResult(PluginResult.Status.ERROR, _errorLog);
+            // pluginResult.setKeepCallback(true);
+            // _barcodeCallBackContext.sendPluginResult(pluginResult);
+
+            call.reject(e.getMessage());
+            return;
+        }
+
     }
 
+    public interface closeBarcodeCallback {
+        void closeBarcodeManager();
+    }
 
+    // private Handler barcodeHandler = new Handler() {
+    private static class BarcodeHandler extends Handler {
+        private PluginCall _call;
+        private closeBarcodeCallback _callBack;
 
+        BarcodeHandler(PluginCall call, closeBarcodeCallback callBack) {
+            _call = call;
+            _callBack = callBack;
+        }
+
+        @Override
+        public void handleMessage(final android.os.Message msg) {
+          
+            Log.d(TAG, "handleMessage");
+
+            if (_call == null) {
+                Log.d("Test", "No stored plugin call for scanBarcode request result");
+                return;
+            }
+
+            if (msg.what == Barcode1DManager.Barcode1D) {
+
+                Log.d(TAG, "handleMessage - Barcode1D");
+
+                String data = msg.getData().getString("data");
+
+                JSObject ret = new JSObject();
+                ret.put("barcodeData", data);
+                _call.resolve(ret);
+
+                // if (_barcodeCallBackContext != null) {
+
+                //     PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, data);
+                //     pluginResult.setKeepCallback(true);
+                //     _barcodeCallBackContext.sendPluginResult(pluginResult);
+
+                //     try {
+                //         Thread.sleep(50);
+                //     } catch (InterruptedException var2) {
+
+                //     }
+                // }
+            } else {
+                _call.reject("no data");
+            }
+
+            Log.d(TAG, "handleMessage - close Barcode");
+            _callBack.closeBarcodeManager();
+      
+        };
+    };
+
+//    private void closeBarcodeManager() {
+//        if (_barcodeManager != null) {
+//            Log.d(TAG, "closeBarcodeManager");
+//
+//            try {
+//                _barcodeManager.Close();
+//            } catch (Exception e) {
+//                _errorLog = e.getMessage();
+//            }
+//
+//        }
+//    }
 
     private void initializeUHFManager() {
 
         Log.d(TAG, "initializeUHFManager C4ApiCordovaPlugin");
 
-        // if (this._uhfManager == null) {
-        //     UhfManager.Port = _uhfPort;
-        //     UhfManager.BaudRate = 115200;
-        //     UhfManager.Power = SerialPort.Power_Rfid;
+        if (this._uhfManager == null) {
+            UhfManager.Port = _uhfPort;
+            UhfManager.BaudRate = 115200;
+            UhfManager.Power = SerialPort.Power_Rfid;
 
-        //     try {
-        //         this._uhfManager = UhfManager.getInstance();
+            try {
+                this._uhfManager = UhfManager.getInstance();
 
-        //         if (this._outputPower > 0) {
-        //             boolean result = _uhfManager.setOutputPower(this._outputPower);
-        //         }
+                if (this._outputPower > 0) {
+                    boolean result = _uhfManager.setOutputPower(this._outputPower);
+                }
 
-        //     } catch (Exception e) {
-        //         _errorLog = e.getMessage();
-        //         e.printStackTrace();
-        //         // Log.d(TAG, "Error: " + e.getMessage());
-        //     }
-        // }
-    }
+                if (this._uhfManager != null) {
+                    Log.d(TAG, "initializeUHFManager C4ApiCordovaPlugin successful");
+                } else {
+                    Log.d(TAG, "initializeUHFManager C4ApiCordovaPlugin failed");
+                }
 
-    private void closeBarcodeManager() {
-        // if (_barcodeManager != null) {
-        //     Log.d(TAG, "closeBarcodeManager");
-
-        //     try {
-        //         _barcodeManager.Close();
-        //     } catch (Exception e) {
-        //         _errorLog = e.getMessage();
-        //     }
-
-        // }
+            } catch (Exception e) {
+                _errorLog = e.getMessage();
+                e.printStackTrace();
+                // Log.d(TAG, "Error: " + e.getMessage());
+            }
+        }
     }
 
     private void disposeUHFManager() {
 
-        // if (this._uhfManager != null) {
-        //     Log.d(TAG, "disposeUHFManager");
+        if (this._uhfManager != null) {
+            Log.d(TAG, "disposeUHFManager");
 
-        //     try {
-        //         this._uhfManager.close();
-        //     } catch (Exception e) {
-        //         _errorLog = e.getMessage();
-        //     }
+            try {
+                this._uhfManager.close();
+            } catch (Exception e) {
+                _errorLog = e.getMessage();
+            }
 
-        //     this._uhfManager = null;
-        // }
+            this._uhfManager = null;
+        }
     }
 
     private void StartInventoryThread() {
 
         Log.d(TAG, "StartInventoryThread");
 
-        // // start inventory thread
-        // startFlag = true;
+        // start inventory thread
+        startFlag = true;
 
-        // if (this._scanThread == null || this._scanThread.getState() == Thread.State.TERMINATED) {
-        //     Log.d(TAG, "StartInventoryThread - create new thread");
-        //     this._scanThread = new InventoryThread();
-        // }
+        if (this._scanThread == null || this._scanThread.getState() == Thread.State.TERMINATED) {
+            Log.d(TAG, "StartInventoryThread - create new thread");
+            this._scanThread = new InventoryThread();
+        }
 
-        // Log.d(TAG, "StartInventoryThread - start thread");
+        Log.d(TAG, "StartInventoryThread - start thread");
 
-        // if (this._scanThread.getState() == Thread.State.NEW) {
-        //     this._scanThread.start();
-        // }
+        if (this._scanThread.getState() == Thread.State.NEW) {
+            this._scanThread.start();
+        }
 
     }
 
@@ -230,7 +351,7 @@ public class C4ApiCapacitorPlugin extends Plugin {
         if (call != null) {
             if (tidList != null || tidList.isEmpty() == false) {
                 JSObject ret = new JSObject();
-                ret.put("value", ConvertArrayList(tidList));
+                ret.put("uhfData", ConvertArrayList(tidList));
                 call.resolve(ret);
 
                 // PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, ConvertArrayList(tidList));
@@ -255,146 +376,146 @@ public class C4ApiCapacitorPlugin extends Plugin {
 
             Log.d(TAG, "InventoryThread starting...");
 
-            // PluginCall savedCall = getSavedCall();
-            // if (savedCall == null) {
-            //     Log.d("Test", "No stored plugin call for startInventory request result");
-            //     return;
-            // }
+            PluginCall savedCall = getSavedCall();
+            if (savedCall == null) {
+                Log.d("Test", "No stored plugin call for startInventory request result");
+                return;
+            }
 
-            // initializeUHFManager();
+            initializeUHFManager();
 
-            // if (_uhfManager == null) {
-            //     Log.d(TAG, "InventoryThread failed creating uhfManager");
-            //     savedCall.reject("InventoryThread failed creating uhfManager");
-            //     return;
-            // }
+            if (_uhfManager == null) {
+                Log.d(TAG, "InventoryThread failed creating uhfManager");
+                savedCall.reject("InventoryThread failed creating uhfManager");
+                return;
+            }
 
-            // Log.d(TAG, "InventoryThread startflag = " + String.valueOf(startFlag));
+            Log.d(TAG, "InventoryThread startflag = " + String.valueOf(startFlag));
 
-            // while (startFlag) {
+            while (startFlag) {
 
-            //     Log.d(TAG, "Waiting for timeout..");
+                Log.d(TAG, "Waiting for timeout..");
 
-            //     if (_uhfManager != null) {
+                if (_uhfManager != null) {
 
-            //         epcList = _uhfManager.inventoryRealTime(); // inventory real time
+                    epcList = _uhfManager.inventoryRealTime(); // inventory real time
 
-            //         if (epcList != null && !epcList.isEmpty()) {
-            //             // play sound
-            //             // Util.play(1, 0);
-            //             tidList = new ArrayList<>();
+                    if (epcList != null && !epcList.isEmpty()) {
+                        // play sound
+                        // Util.play(1, 0);
+                        tidList = new ArrayList<>();
 
-            //             for (byte[] epc : epcList) {
+                        for (byte[] epc : epcList) {
 
-            //                 if (SelectEPC(epc, savedCall)) {
-            //                     byte[] tid = GetTID(savedCall);
+                            if (SelectEPC(epc, savedCall)) {
+                                byte[] tid = GetTID(savedCall);
 
-            //                     if (tid != null) {
-            //                         String tidStr = Tools.Bytes2HexString(tid, tid.length);
-            //                         tidList.add(tidStr);
-            //                     }
-            //                 }
-            //             }
+                                if (tid != null) {
+                                    String tidStr = Tools.Bytes2HexString(tid, tid.length);
+                                    tidList.add(tidStr);
+                                }
+                            }
+                        }
 
-            //             if (!tidList.isEmpty()) {
-            //                     returnCurrentTIDs(tidList, savedCall);
-            //                     startFlag = false;
-            //             }
+                        if (!tidList.isEmpty()) {
+                                returnCurrentTIDs(tidList, savedCall);
+                                startFlag = false;
+                        }
 
-            //         }
+                    }
 
-            //     } else {
-            //         // returnCurrentTIDs(null);
-            //         savedCall.reject("UHFManager is not initialized!");
-            //     }
+                } else {
+                    // returnCurrentTIDs(null);
+                    savedCall.reject("UHFManager is not initialized!");
+                }
 
-            //     epcList = null;
+                epcList = null;
 
-            //     try {
-            //         Thread.sleep(40);
-            //     } catch (InterruptedException e) {
-            //         // Thread.currentThread().interrupt();
-            //         e.printStackTrace();
-            //         // return;
-            //     }
+                try {
+                    Thread.sleep(40);
+                } catch (InterruptedException e) {
+                    // Thread.currentThread().interrupt();
+                    e.printStackTrace();
+                    // return;
+                }
 
-            //     // }
-            // } // while
+                // }
+            } // while
 
-            // Log.d(TAG, "InventoryThread is closing...");
+            Log.d(TAG, "InventoryThread is closing...");
 
-            // disposeUHFManager();
+            disposeUHFManager();
 
 
         } // run
 
         private boolean SelectEPC(byte[] epc, PluginCall call) {
-            // try {
-            //     if (_uhfManager != null) {
-            //         _uhfManager.selectEPC(epc);
-            //     }
-            // } catch (Exception ex) {
-            //     if (call != null) {
-            //         call.reject("Fehler-SelectEPC: " + ex.getMessage());
-            //     }
+            try {
+                if (_uhfManager != null) {
+                    _uhfManager.selectEPC(epc);
+                }
+            } catch (Exception ex) {
+                if (call != null) {
+                    call.reject("Fehler-SelectEPC: " + ex.getMessage());
+                }
 
-            //     return false;
-            // }
+                return false;
+            }
 
              return true;
         }
 
         // first select tag by epc
         private byte[] GetTID(PluginCall call) {
-            // // Parameters: int memBank store RESEVER zone 0, EPC District 1, TID District 2,
-            // // USER District 3;
-            // // int startAddr starting address (not too large, depending on the size of the
-            // // data area);
-            // // int length read data length, in units of word (1word = 2bytes); byte []
-            // // accessPassword password 4 bytes
-            // int tidLength = 6; // in word 1 word = 2 byte
-            // // byte[] tid; // = new byte[tidLength*2];
+            // Parameters: int memBank store RESEVER zone 0, EPC District 1, TID District 2,
+            // USER District 3;
+            // int startAddr starting address (not too large, depending on the size of the
+            // data area);
+            // int length read data length, in units of word (1word = 2bytes); byte []
+            // accessPassword password 4 bytes
+            int tidLength = 6; // in word 1 word = 2 byte
+            // byte[] tid; // = new byte[tidLength*2];
 
-            // if (_uhfManager == null) {
-            //     return null;
-            // }
+            if (_uhfManager == null) {
+                return null;
+            }
 
-            // Log.d(TAG, "GetTID");
+            Log.d(TAG, "GetTID");
 
-            // try {
-            //     byte[] pw = new byte[4];
-            //     byte[] tid = _uhfManager.readFrom6C(2, 0, tidLength, pw);
+            try {
+                byte[] pw = new byte[4];
+                byte[] tid = _uhfManager.readFrom6C(2, 0, tidLength, pw);
 
-            //     if (tid != null && tid.length > 1) {
+                if (tid != null && tid.length > 1) {
 
-            //         Log.d(TAG, "GetTID - " + tid);
-            //         return tid;
+                    Log.d(TAG, "GetTID - " + tid);
+                    return tid;
 
-            //     } else {
-            //         if (tid != null) {
-            //             // tid has error code
+                } else {
+                    if (tid != null) {
+                        // tid has error code
 
-            //             // try again with small tid (8 byte)
-            //             tidLength = 4;
-            //             tid = _uhfManager.readFrom6C(2, 0, tidLength, pw);
+                        // try again with small tid (8 byte)
+                        tidLength = 4;
+                        tid = _uhfManager.readFrom6C(2, 0, tidLength, pw);
 
-            //             if (tid != null && tid.length > 1) {
-            //                 return tid;
-            //             } else {
-            //                 // tid has error code
-            //                 call.reject("Fehler-GetTID tid error code: " + Tools.Bytes2HexString(tid, tid.length));
+                        if (tid != null && tid.length > 1) {
+                            return tid;
+                        } else {
+                            // tid has error code
+                            call.reject("Fehler-GetTID tid error code: " + Tools.Bytes2HexString(tid, tid.length));
 
-            //                 return null;
-            //             }
-            //         }
-            //         return null;
-            //     }
+                            return null;
+                        }
+                    }
+                    return null;
+                }
 
-            // } catch (Exception ex) {
+            } catch (Exception ex) {
 
-            //     call.reject("Fehler-GetTID: " + ex.getMessage());
+                call.reject("Fehler-GetTID: " + ex.getMessage());
 
-            // }
+            }
 
             return null;
         }
