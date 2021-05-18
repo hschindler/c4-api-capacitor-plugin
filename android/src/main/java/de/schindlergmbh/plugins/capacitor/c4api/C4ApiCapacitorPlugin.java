@@ -36,7 +36,7 @@ public class C4ApiCapacitorPlugin extends Plugin {
 
     private ArrayList<String> _listepc = new ArrayList<String>();
     private ArrayList<String> _listTID = new ArrayList<String>();
-    private ArrayList<EPC> _listEPCObject;
+    // private ArrayList<EPC> _listEPCObject;
 
     private boolean startFlag = false;
 
@@ -113,7 +113,7 @@ public class C4ApiCapacitorPlugin extends Plugin {
 
         Boolean result = true;
         
-        _listEPCObject = new ArrayList<EPC>();
+        // _listEPCObject = new ArrayList<EPC>();
 
         saveCall(call);
 
@@ -263,18 +263,18 @@ public class C4ApiCapacitorPlugin extends Plugin {
         };
     };
 
-//    private void closeBarcodeManager() {
-//        if (_barcodeManager != null) {
-//            Log.d(TAG, "closeBarcodeManager");
-//
-//            try {
-//                _barcodeManager.Close();
-//            } catch (Exception e) {
-//                _errorLog = e.getMessage();
-//            }
-//
-//        }
-//    }
+    //    private void closeBarcodeManager() {
+    //        if (_barcodeManager != null) {
+    //            Log.d(TAG, "closeBarcodeManager");
+    //
+    //            try {
+    //                _barcodeManager.Close();
+    //            } catch (Exception e) {
+    //                _errorLog = e.getMessage();
+    //            }
+    //
+    //        }
+    //    }
 
     private void initializeUHFManager() {
 
@@ -359,7 +359,7 @@ public class C4ApiCapacitorPlugin extends Plugin {
         return jsonArray;
     }
 
-      // add TIDs to view
+    // add TIDs to view
     private void returnCurrentTIDs(final ArrayList<String> tidList, PluginCall call) {
         if (call != null) {
             if (tidList != null || tidList.isEmpty() == false) {
