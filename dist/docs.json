@@ -38,8 +38,14 @@
       },
       {
         "name": "startInventory",
-        "signature": "() => any",
-        "parameters": [],
+        "signature": "(options: { value: string; }) => any",
+        "parameters": [
+          {
+            "name": "options",
+            "docs": "",
+            "type": "{ value: string; }"
+          }
+        ],
         "returns": "any",
         "tags": [
           {
@@ -68,8 +74,14 @@
       },
       {
         "name": "setOutputPower",
-        "signature": "() => any",
-        "parameters": [],
+        "signature": "(options: { value: number; }) => any",
+        "parameters": [
+          {
+            "name": "options",
+            "docs": "",
+            "type": "{ value: number; }"
+          }
+        ],
         "returns": "any",
         "tags": [
           {
