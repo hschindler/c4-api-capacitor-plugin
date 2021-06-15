@@ -36,7 +36,7 @@ public class C4ApiCapacitorPlugin extends Plugin {
 
     private ArrayList<String> _listepc = new ArrayList<String>();
     private ArrayList<String> _listTID = new ArrayList<String>();
-    private ArrayList<EPC> _listEPCObject;
+    // private ArrayList<EPC> _listEPCObject;
 
     private boolean startFlag = false;
 
@@ -110,11 +110,15 @@ public class C4ApiCapacitorPlugin extends Plugin {
     public void startInventory(PluginCall call) {
        
         Log.d(TAG, "startInventory");
-
-        Boolean result = true;
         
-        _listEPCObject = new ArrayList<EPC>();
+        String value = call.getString("value", "tid");
 
+        Log.d(TAG, "startInventory value=" + value);
+        
+        if (value.equals("tid") || value.equals("epc")) {
+            this._readMode = value;
+        }
+        
         saveCall(call);
 
         this.StartInventoryThread();
@@ -136,11 +140,19 @@ public class C4ApiCapacitorPlugin extends Plugin {
 
     @PluginMethod()
     public void setOutputPower(PluginCall call) {
+        // 0-30
+        Integer value = call.getInt("value", 30);
 
-        Boolean result = true;       
-
+        if (value != null) {
+            Log.d(TAG, "Power value = " + value);
+            this._outputPower = value;
+            Log.d(TAG, "outputPower value = " + new Integer(this._outputPower).toString());
+        } else {
+            Log.d(TAG, "Power value = null");
+        }
+        
         JSObject ret = new JSObject();
-        ret.put("value", result);
+        ret.put("value", this._outputPower);
         call.resolve(ret);
     }
 
@@ -263,18 +275,18 @@ public class C4ApiCapacitorPlugin extends Plugin {
         };
     };
 
-//    private void closeBarcodeManager() {
-//        if (_barcodeManager != null) {
-//            Log.d(TAG, "closeBarcodeManager");
-//
-//            try {
-//                _barcodeManager.Close();
-//            } catch (Exception e) {
-//                _errorLog = e.getMessage();
-//            }
-//
-//        }
-//    }
+    //    private void closeBarcodeManager() {
+    //        if (_barcodeManager != null) {
+    //            Log.d(TAG, "closeBarcodeManager");
+    //
+    //            try {
+    //                _barcodeManager.Close();
+    //            } catch (Exception e) {
+    //                _errorLog = e.getMessage();
+    //            }
+    //
+    //        }
+    //    }
 
     private void initializeUHFManager() {
 
@@ -359,7 +371,7 @@ public class C4ApiCapacitorPlugin extends Plugin {
         return jsonArray;
     }
 
-      // add TIDs to view
+    // add TIDs to view
     private void returnCurrentTIDs(final ArrayList<String> tidList, PluginCall call) {
         if (call != null) {
             if (tidList != null || tidList.isEmpty() == false) {
@@ -516,7 +528,11 @@ public class C4ApiCapacitorPlugin extends Plugin {
                             return tid;
                         } else {
                             // tid has error code
-                            call.reject("Fehler-GetTID tid error code: " + Tools.Bytes2HexString(tid, tid.length));
+                            if (tid != null) {
+                                call.reject("Fehler-GetTID tid error code: " + Tools.Bytes2HexString(tid, tid.length));
+                            } else {
+                                call.reject("Fehler-GetTID tid no error code");
+                            }        
 
                             return null;
                         }
