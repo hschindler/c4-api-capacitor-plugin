@@ -48,6 +48,7 @@ public class C4ApiCapacitorPlugin extends Plugin {
     private int _barcodePower = SerialPort.Power_Scaner;
     private int _barcodeBaudrate = 9600;
 
+    private String _readMode = "tid"; // tid / epc
     private int _outputPower = 0;
 
     private Thread _scanThread;
