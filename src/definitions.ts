@@ -13,7 +13,7 @@ export interface C4ApiCapacitorPlugin {
   *
   * @since 1.0.0
   */
-  startInventory(): Promise<{ uhfData: string[] }>;
+  startInventory(options: { value: string }): Promise<{ uhfData: string[] }>;
 
   /**
   * Stops RFID UHF inventory.
@@ -27,7 +27,7 @@ export interface C4ApiCapacitorPlugin {
   *
   * @since 1.0.0
   */
-  setOutputPower(): Promise<boolean>;
+  setOutputPower(options: { value: number }): Promise<number>;
 
   /**
   * Starts scanning barcode with 1D Scanner.
