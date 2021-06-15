@@ -23,7 +23,7 @@ export class C4ApiCapacitorPluginWeb extends WebPlugin implements C4ApiCapacitor
         this.throwUnimplementedError();
     }
 
-    async setOutputPower(): Promise<boolean> {
+    async setOutputPower(): Promise<number> {
         // logic here
         this.throwUnimplementedError();
     }

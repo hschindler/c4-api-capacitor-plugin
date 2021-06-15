@@ -13,7 +13,7 @@ export declare class C4ApiCapacitorPluginWeb extends WebPlugin implements C4ApiC
         uhfData: string[];
     }>;
     stopInventory(): Promise<boolean>;
-    setOutputPower(): Promise<boolean>;
+    setOutputPower(): Promise<number>;
     scanBarcode(): Promise<{
         barcodeData: string;
     }>;

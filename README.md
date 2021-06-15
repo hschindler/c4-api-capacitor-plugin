@@ -15,9 +15,9 @@ npx cap sync
 
 * [`echo(...)`](#echo)
 * [`getFirmware()`](#getfirmware)
-* [`startInventory()`](#startinventory)
+* [`startInventory(...)`](#startinventory)
 * [`stopInventory()`](#stopinventory)
-* [`setOutputPower()`](#setoutputpower)
+* [`setOutputPower(...)`](#setoutputpower)
 * [`scanBarcode()`](#scanbarcode)
 
 </docgen-index>
@@ -55,13 +55,17 @@ Gets RFID UHF reader firmware.
 --------------------
 
 
-### startInventory()
+### startInventory(...)
 
 ```typescript
-startInventory() => any
+startInventory(options: { value: string; }) => any
 ```
 
 Starts RFID UHF inventory.
+
+| Param         | Type                            |
+| ------------- | ------------------------------- |
+| **`options`** | <code>{ value: string; }</code> |
 
 **Returns:** <code>any</code>
 
@@ -85,13 +89,17 @@ Stops RFID UHF inventory.
 --------------------
 
 
-### setOutputPower()
+### setOutputPower(...)
 
 ```typescript
-setOutputPower() => any
+setOutputPower(options: { value: number; }) => any
 ```
 
 Sets RFID UHF output power.
+
+| Param         | Type                            |
+| ------------- | ------------------------------- |
+| **`options`** | <code>{ value: number; }</code> |
 
 **Returns:** <code>any</code>
 
