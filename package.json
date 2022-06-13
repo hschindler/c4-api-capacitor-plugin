@@ -1,6 +1,6 @@
 {
   "name": "c4-api-capacitor-plugin",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Plugin for C4 Devices to use Barcode and UHF RFID",
   "main": "dist/plugin.cjs.js",
   "module": "dist/esm/index.js",
@@ -58,7 +58,7 @@
     "typescript": "~4.0.3"
   },
   "peerDependencies": {
-    "@capacitor/core": "next"
+    "@capacitor/core": "^3.4.3"
   },
   "prettier": "@ionic/prettier-config",
   "swiftlint": "@ionic/swiftlint-config",
