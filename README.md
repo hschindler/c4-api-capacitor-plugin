@@ -28,14 +28,14 @@ npx cap sync
 ### echo(...)
 
 ```typescript
-echo(options: { value: string; }) => any
+echo(options: { value: string; }) => Promise<{ value: string; }>
 ```
 
 | Param         | Type                            |
 | ------------- | ------------------------------- |
 | **`options`** | <code>{ value: string; }</code> |
 
-**Returns:** <code>any</code>
+**Returns:** <code>Promise&lt;{ value: string; }&gt;</code>
 
 --------------------
 
@@ -43,12 +43,12 @@ echo(options: { value: string; }) => any
 ### getFirmware()
 
 ```typescript
-getFirmware() => any
+getFirmware() => Promise<{ firmware: number[]; }>
 ```
 
 Gets RFID UHF reader firmware.
 
-**Returns:** <code>any</code>
+**Returns:** <code>Promise&lt;{ firmware: number[]; }&gt;</code>
 
 **Since:** 1.0.0
 
@@ -58,7 +58,7 @@ Gets RFID UHF reader firmware.
 ### startInventory(...)
 
 ```typescript
-startInventory(options: { value: string; }) => any
+startInventory(options: { value: string; }) => Promise<{ uhfData: string[]; }>
 ```
 
 Starts RFID UHF inventory.
@@ -67,7 +67,7 @@ Starts RFID UHF inventory.
 | ------------- | ------------------------------- |
 | **`options`** | <code>{ value: string; }</code> |
 
-**Returns:** <code>any</code>
+**Returns:** <code>Promise&lt;{ uhfData: string[]; }&gt;</code>
 
 **Since:** 1.0.0
 
@@ -77,12 +77,12 @@ Starts RFID UHF inventory.
 ### stopInventory()
 
 ```typescript
-stopInventory() => any
+stopInventory() => Promise<boolean>
 ```
 
 Stops RFID UHF inventory.
 
-**Returns:** <code>any</code>
+**Returns:** <code>Promise&lt;boolean&gt;</code>
 
 **Since:** 1.0.0
 
@@ -92,7 +92,7 @@ Stops RFID UHF inventory.
 ### setOutputPower(...)
 
 ```typescript
-setOutputPower(options: { value: number; }) => any
+setOutputPower(options: { value: number; }) => Promise<number>
 ```
 
 Sets RFID UHF output power.
@@ -101,7 +101,7 @@ Sets RFID UHF output power.
 | ------------- | ------------------------------- |
 | **`options`** | <code>{ value: number; }</code> |
 
-**Returns:** <code>any</code>
+**Returns:** <code>Promise&lt;number&gt;</code>
 
 **Since:** 1.0.0
 
@@ -111,12 +111,12 @@ Sets RFID UHF output power.
 ### scanBarcode()
 
 ```typescript
-scanBarcode() => any
+scanBarcode() => Promise<{ barcodeData: string; }>
 ```
 
 Starts scanning barcode with 1D Scanner.
 
-**Returns:** <code>any</code>
+**Returns:** <code>Promise&lt;{ barcodeData: string; }&gt;</code>
 
 **Since:** 1.0.0
 

@@ -305,6 +305,8 @@ public class C4ApiCapacitorPlugin extends Plugin {
                     boolean result = _uhfManager.setOutputPower(this._outputPower);
                 }
 
+                _uhfManager.setWorkArea(UhfManager.WorkArea_Europe);
+
                 if (this._uhfManager != null) {
                     Log.d(TAG, "initializeUHFManager C4ApiCordovaPlugin successful");
                 } else {
