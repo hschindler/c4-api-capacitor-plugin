@@ -7,7 +7,7 @@
     "methods": [
       {
         "name": "echo",
-        "signature": "(options: { value: string; }) => any",
+        "signature": "(options: { value: string; }) => Promise<{ value: string; }>",
         "parameters": [
           {
             "name": "options",
@@ -15,7 +15,7 @@
             "type": "{ value: string; }"
           }
         ],
-        "returns": "any",
+        "returns": "Promise<{ value: string; }>",
         "tags": [],
         "docs": "",
         "complexTypes": [],
@@ -23,9 +23,9 @@
       },
       {
         "name": "getFirmware",
-        "signature": "() => any",
+        "signature": "() => Promise<{ firmware: number[]; }>",
         "parameters": [],
-        "returns": "any",
+        "returns": "Promise<{ firmware: number[]; }>",
         "tags": [
           {
             "name": "since",
@@ -38,7 +38,7 @@
       },
       {
         "name": "startInventory",
-        "signature": "(options: { value: string; }) => any",
+        "signature": "(options: { value: string; }) => Promise<{ uhfData: string[]; }>",
         "parameters": [
           {
             "name": "options",
@@ -46,7 +46,7 @@
             "type": "{ value: string; }"
           }
         ],
-        "returns": "any",
+        "returns": "Promise<{ uhfData: string[]; }>",
         "tags": [
           {
             "name": "since",
@@ -59,9 +59,9 @@
       },
       {
         "name": "stopInventory",
-        "signature": "() => any",
+        "signature": "() => Promise<boolean>",
         "parameters": [],
-        "returns": "any",
+        "returns": "Promise<boolean>",
         "tags": [
           {
             "name": "since",
@@ -74,7 +74,7 @@
       },
       {
         "name": "setOutputPower",
-        "signature": "(options: { value: number; }) => any",
+        "signature": "(options: { value: number; }) => Promise<number>",
         "parameters": [
           {
             "name": "options",
@@ -82,7 +82,7 @@
             "type": "{ value: number; }"
           }
         ],
-        "returns": "any",
+        "returns": "Promise<number>",
         "tags": [
           {
             "name": "since",
@@ -95,9 +95,9 @@
       },
       {
         "name": "scanBarcode",
-        "signature": "() => any",
+        "signature": "() => Promise<{ barcodeData: string; }>",
         "parameters": [],
-        "returns": "any",
+        "returns": "Promise<{ barcodeData: string; }>",
         "tags": [
           {
             "name": "since",
@@ -112,5 +112,7 @@
     "properties": []
   },
   "interfaces": [],
-  "enums": []
+  "enums": [],
+  "typeAliases": [],
+  "pluginConfigs": []
 }
